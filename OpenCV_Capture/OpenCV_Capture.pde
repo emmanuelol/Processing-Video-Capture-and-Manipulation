@@ -46,27 +46,43 @@ void setup() {
   video = new Capture(this, width, height);
   opencv = new OpenCV(this, width, height);
   
-  // For the face detection to work, you need to 
+  // For the face detection to work, you need to load in a 'cascade' file. This a file that contains 
+  // information on what OpenCV should be looking for. In our case we are loading a cascade for face
+  // recognition but you can look for all sorts of features in your video. 
   
-  opencv.loadCascade("/Volumes/DBARR/1. Units/2015 - 16/2. OOP/Camera Capture/OpenCV_Capture/cascade-files/haarcascade_frontalface_alt.xml", true);  
+  // You seem to need the full file path for this to work. A relative URL isn't good enough.
+  // To use this program, navigate to your folder for this sketch and then get the file path to the file inside 
+  // the cascade-files folder.
+  
+  opencv.loadCascade("C:/Users/in13db/Desktop/Processing Video Capture and Manipulation/OpenCV_Capture/cascade-files/haarcascade_frontalface_alt.xml", true);  
 
   video.start();
 }
 
 void draw() {
-  scale(2);
-  opencv.loadImage(video);
+  
+  background(255);
+  
+  opencv.loadImage(video);      // load a frame of data from video into the OpenCV object.
 
-  image(video, 0, 0 );
-
+  image(video, 0, 0 );          // load the video on to the screen.
+  
+  // notice that the two steps above are totally seperate. You can still be running face recognition 
+  // without needing to display the video on screen.
+  
   noFill();
   stroke(0, 255, 0);
   strokeWeight(1);
-  Rectangle[] faces = opencv.detect();
-  println(faces.length);
+  
+  Rectangle[] faces = opencv.detect();      // Get an array of Rectangles from OpenCV, one for each face
+                                            // The Rectangle class isn't part of Processing, it's a native Java
+                                            // class - look here for a reference: 
+                                            // http://docs.oracle.com/javase/7/docs/api/java/awt/Rectangle.html
+  
+  println("Found " + faces.length + " face(s) this frame at the coords:");
 
   for (int i = 0; i < faces.length; i++) {
-    println(faces[i].x + "," + faces[i].y);
+    println("Face " + i + " at\t" + faces[i].x + "," + faces[i].y);
     rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height);
   }
 }
